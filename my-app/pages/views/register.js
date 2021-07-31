@@ -4,24 +4,24 @@ import Image from 'next/image'
 import logo from '../resource/logo.png'
 import { useRouter } from 'next/router'
 import swal from "sweetalert"
+import axios from "axios"
 
 export default function Login() {
     const router = useRouter()
     const { register, handleSubmit } = useForm()
 
     function onSubmit(data) {
-
-        fetch('https://dangerlist.herokuapp.com/register', {
+        axios({
+            url: 'https://dangerlist.herokuapp.com/register',
             method: 'POST',
-            headers: { "Content-type": "application/json; charset=UTF-8" },
-            body: JSON.stringify(data),
+            data: data
         })
-            .then((res) => res.json())
-            .then((result) => {
+            .then(({ data }) => {
+                swal("Good job!", "Register success", "success", {
+                    button: "OK!"
+                });
                 router.push('/views/login')
-            })
-            .catch((err) => {
-                console.log(err.response);
+            }).catch((err) => {
                 swal("Incorrect!", "Somethink wrong, please try again", "error", {
                     button: "OK!"
                 });

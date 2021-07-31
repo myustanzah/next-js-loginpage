@@ -3,6 +3,7 @@ import styles from '../../styles/Home.module.css'
 import Image from 'next/image'
 import logo from '../resource/logo.png'
 import { useRouter } from 'next/router'
+import axios from 'axios'
 import swal from "sweetalert"
 
 export default function Login() {
@@ -10,20 +11,17 @@ export default function Login() {
   const { register, handleSubmit } = useForm()
 
   function onSubmit(data) {
-
-    fetch('https://dangerlist.herokuapp.com/login', {
+    axios({
+      url: 'https://dangerlist.herokuapp.com/login',
       method: 'POST',
-      headers: { "Content-type": "application/json; charset=UTF-8" },
-      body: JSON.stringify(data),
+      data: data
     })
-      .then((res) => res.json())
-      .then((result) => {
-        if (result.token) {
-          window.localStorage.setItem('token', result.token), router.push('/views/dashboard')
+      .then(({ data }) => {
+        if (data.token) {
+          window.localStorage.setItem('token', data.token)
+          router.push('/views/dashboard')
         }
-      })
-      .catch((err) => {
-        console.log(err.response);
+      }).catch((err) => {
         swal("Incorrect!", "Somethink wrong, please try again", "error", {
           button: "OK!"
         });
@@ -46,7 +44,7 @@ export default function Login() {
           <Image src={logo} />
         </div>
         <div className={styles.form}>
-          
+
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-3">
               <label className="form-label">Email address</label>
